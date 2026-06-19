@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Events | EventPulse</title>
+
+    <meta name="description" content="Browse all available events on EventPulse. Search and filter by category — workshops, conferences, sports, cultural events, and volunteer activities.">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0a0e1a">
+    <link rel="canonical" href="/events">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="/events">
+    <meta property="og:title" content="Browse Events | EventPulse">
+    <meta property="og:description" content="Search and filter events by category. Register for your seat instantly.">
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <a href="/" class="logo" aria-label="EventPulse Home">
+            <span class="logo-icon" aria-hidden="true">⚡</span>
+            <span class="logo-text">EventPulse</span>
+        </a>
+        <nav aria-label="Main navigation">
+            <a href="/">Home</a>
+            <a href="/events" class="active">Events</a>
+            <div id="nav-auth-links" class="nav-buttons">
+                <a href="/login" class="btn btn-secondary btn-sm">Sign In</a>
+                <a href="/register" class="btn btn-primary btn-sm">Create Account</a>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        <div class="section-header">
+            <h1>All Events</h1>
+        </div>
+
+        <section class="filter-section" aria-label="Event filters">
+            <div class="search-box">
+                <label for="search-input" class="sr-only">Search events</label>
+                <input type="search" id="search-input" class="form-input" placeholder="Search by name, description, or location...">
+            </div>
+            <div>
+                <label for="category-filter" class="sr-only">Filter by category</label>
+                <select id="category-filter" class="filter-select">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+        </section>
+
+        <section aria-label="Event listings">
+            <div id="events-container" class="grid" role="list">
+                <div class="loading-state" role="status">
+                    <div class="loading-spinner" aria-hidden="true"></div>
+                    Loading events...
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 EventPulse. Demo data for presentation purposes. All rights reserved.</p>
+    </footer>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/events.js"></script>
+</body>
+</html>
