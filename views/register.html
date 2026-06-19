@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | EventPulse</title>
+
+    <meta name="description" content="Create a free EventPulse account to attend events or register as an organizer to manage and publish your own events.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#0a0e1a">
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <a href="/" class="logo" aria-label="EventPulse Home">
+            <span class="logo-icon" aria-hidden="true">⚡</span>
+            <span class="logo-text">EventPulse</span>
+        </a>
+        <nav aria-label="Main navigation">
+            <a href="/">Home</a>
+            <a href="/events">Events</a>
+            <div id="nav-auth-links" class="nav-buttons">
+                <a href="/login" class="btn btn-secondary btn-sm">Sign In</a>
+                <a href="/register" class="btn btn-primary btn-sm">Create Account</a>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        <section class="form-container">
+            <h1 class="form-title">Create Account</h1>
+            <p class="form-subtitle">Join our community of event-goers and organizers</p>
+
+            <form id="register-form" novalidate>
+                <div class="form-group">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" id="name" name="name" class="form-input" placeholder="John Smith" autocomplete="name" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" class="form-input" placeholder="+1 555 000 0000" autocomplete="tel" required>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com" autocomplete="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="form-label">Password (minimum 6 characters)</label>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="Create a secure password" autocomplete="new-password" minlength="6" required>
+                </div>
+                <div class="form-group">
+                    <span class="form-label">Account Type</span>
+                    <div class="role-selector" role="radiogroup" aria-label="Account type">
+                        <label class="role-option selected" id="role-user-label">
+                            <input type="radio" name="role" value="user" checked> Event Attendee
+                        </label>
+                        <label class="role-option" id="role-organizer-label">
+                            <input type="radio" name="role" value="organizer"> Event Organizer
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">Create Account</button>
+            </form>
+
+            <p class="form-footer-text">
+                Already have an account? <a href="/login">Sign in here</a>
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 EventPulse. Demo data for presentation purposes. All rights reserved.</p>
+    </footer>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/auth.js"></script>
+</body>
+</html>
