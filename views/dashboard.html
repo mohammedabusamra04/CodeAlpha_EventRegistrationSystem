@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | EventPulse</title>
+
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#0a0e1a">
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <a href="/" class="logo" aria-label="EventPulse Home">
+            <span class="logo-icon" aria-hidden="true">⚡</span>
+            <span class="logo-text">EventPulse</span>
+        </a>
+        <nav aria-label="Main navigation">
+            <a href="/">Home</a>
+            <a href="/events">Events</a>
+            <div id="nav-auth-links" class="nav-buttons"></div>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        <div class="admin-header">
+            <div>
+                <h1 id="user-greeting">Welcome</h1>
+                <p style="color: var(--text-secondary);" id="user-role-lbl">Your Personal Dashboard</p>
+            </div>
+            <div id="organizer-actions" style="display: none;">
+                <a href="/admin" class="btn btn-primary">Organizer Panel</a>
+            </div>
+        </div>
+
+        <nav class="tabs-header" aria-label="Dashboard sections">
+            <button class="tab-btn active" onclick="switchTab('my-registrations')">My Registrations</button>
+            <button class="tab-btn" onclick="switchTab('my-notifications')">
+                Notifications
+                <span id="unread-count" class="badge-count">0</span>
+            </button>
+        </nav>
+
+        <div id="my-registrations" class="tab-content active" role="tabpanel">
+            <div id="registrations-list" class="grid">
+                <div class="loading-state" role="status">
+                    <div class="loading-spinner" aria-hidden="true"></div>
+                    Loading your registrations...
+                </div>
+            </div>
+        </div>
+
+        <div id="my-notifications" class="tab-content" role="tabpanel">
+            <div id="notifications-list" style="max-width: 800px; margin: 0 auto;">
+                <div class="loading-state" role="status">
+                    <div class="loading-spinner" aria-hidden="true"></div>
+                    Loading notifications...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 EventPulse. Demo data for presentation purposes. All rights reserved.</p>
+    </footer>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        const user = getAuthUser();
+        if (!user) {
+            showToast('Please sign in to access your dashboard.', 'error');
+            setTimeout(() => window.location.href = '/login', 1500);
+        }
+    </script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
