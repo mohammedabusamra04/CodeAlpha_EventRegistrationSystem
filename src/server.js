@@ -7,8 +7,16 @@ sequelize.authenticate()
         console.log('Database connected');
         return sequelize.sync({ alter: true });
     })
-    .then(() => {
+    .then(async () => {
         console.log('Database synced');
+        
+        try {
+            const { seedData } = require('./config/seed');
+            await seedData();
+        } catch (e) {
+            console.error('Database seeding failed during startup:', e);
+        }
+
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
         });
