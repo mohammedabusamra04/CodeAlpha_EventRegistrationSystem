@@ -1,8 +1,14 @@
 const { Event, Category, User, Registration } = require('../models');
+const { createNotification } = require('./notificationController');
 
 const createEvent = async (req, res) => {
     const { title, description, thumbnail, location, address, startDate, endDate, capacity, price, categoryId } = req.body;
     try {
+        const category = await Category.findByPk(categoryId);
+        if (!category) {
+            return res.status(400).json({ message: 'Invalid Category ID' });
+        }
+
         const event = await Event.create({
             title,
             description,
@@ -13,13 +19,14 @@ const createEvent = async (req, res) => {
             endDate,
             capacity,
             availableSeats: capacity,
-            price,
+            price: price || 0,
             categoryId,
             organizerId: req.user.id,
         });
         res.status(201).json(event);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('Create Event Error:', err);
+        res.status(500).json({ message: 'Internal server error occurred' });
     }
 };
 
@@ -30,10 +37,12 @@ const getEvents = async (req, res) => {
                 { model: Category, as: 'category', attributes: ['name'] },
                 { model: User, as: 'organizer', attributes: ['name'] },
             ],
+            order: [['startDate', 'ASC']]
         });
         res.json(events);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('Get Events Error:', err);
+        res.status(500).json({ message: 'Internal server error occurred' });
     }
 };
 
@@ -51,7 +60,8 @@ const getEvent = async (req, res) => {
         }
         res.json(event);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('Get Event Error:', err);
+        res.status(500).json({ message: 'Internal server error occurred' });
     }
 };
 
@@ -63,25 +73,58 @@ const updateEvent = async (req, res) => {
         if (!event) {
             return res.status(404).json({ message: 'Event not found' });
         }
-        if (event.organizerId !== req.user.id) {
+        if (event.organizerId !== req.user.id && req.user.role !== 'admin') {
             return res.status(403).json({ message: 'You are not authorized to update this event' });
         }
+
+        if (categoryId) {
+            const category = await Category.findByPk(categoryId);
+            if (!category) {
+                return res.status(400).json({ message: 'Invalid Category ID' });
+            }
+        }
+
+        let newAvailableSeats = event.availableSeats;
+        if (capacity !== undefined) {
+            const diff = capacity - event.capacity;
+            newAvailableSeats = event.availableSeats + diff;
+            if (newAvailableSeats < 0) {
+                return res.status(400).json({ message: 'Cannot reduce capacity below currently registered seats count' });
+            }
+        }
+
         await event.update({
-            title,
-            description,
-            thumbnail,
-            location,
-            address,
-            startDate,
-            endDate,
-            capacity,
-            availableSeats: capacity - (event.capacity - event.availableSeats),
-            price,
-            categoryId,
+            title: title || event.title,
+            description: description || event.description,
+            thumbnail: thumbnail || event.thumbnail,
+            location: location || event.location,
+            address: address || event.address,
+            startDate: startDate || event.startDate,
+            endDate: endDate || event.endDate,
+            capacity: capacity !== undefined ? capacity : event.capacity,
+            availableSeats: newAvailableSeats,
+            price: price !== undefined ? price : event.price,
+            categoryId: categoryId || event.categoryId,
         });
+
+        // If critical details are updated, notify registered users
+        if (title || location || address || startDate || endDate) {
+            const registrations = await Registration.findAll({ where: { eventId: id } });
+            for (const reg of registrations) {
+                await createNotification(
+                    reg.userId,
+                    id,
+                    'Event Details Updated',
+                    `The details for event "${event.title}" have been updated. Please review the updated page for details.`,
+                    'reminder'
+                ).catch(err => console.error('Failed to create notification for updateEvent:', err));
+            }
+        }
+
         res.json(event);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('Update Event Error:', err);
+        res.status(500).json({ message: 'Internal server error occurred' });
     }
 };
 
@@ -92,13 +135,14 @@ const deleteEvent = async (req, res) => {
         if (!event) {
             return res.status(404).json({ message: 'Event not found' });
         }
-        if (event.organizerId !== req.user.id) {
+        if (event.organizerId !== req.user.id && req.user.role !== 'admin') {
             return res.status(403).json({ message: 'You are not authorized to delete this event' });
         }
         await event.destroy();
         res.json({ message: 'Event deleted successfully' });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('Delete Event Error:', err);
+        res.status(500).json({ message: 'Internal server error occurred' });
     }
 };
 
