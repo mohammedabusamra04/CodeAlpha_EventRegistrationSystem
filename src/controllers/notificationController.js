@@ -1,4 +1,4 @@
-const { Notification } = require('../models');
+const { Notification, Event } = require('../models');
 
 const createNotification = async (userId, eventId, title, message, type) => {
     try {
@@ -24,7 +24,8 @@ const getUserNotifications = async (req, res) => {
         });
         res.json(notifications);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('Get User Notifications Error:', err);
+        res.status(500).json({ message: 'Internal server error occurred' });
     }
 };
 
@@ -35,22 +36,37 @@ const markAsRead = async (req, res) => {
         if (!notification) {
             return res.status(404).json({ message: 'Notification not found' });
         }
+        if (notification.userId !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
         await notification.update({ isRead: true });
         res.json(notification);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('Mark Notification As Read Error:', err);
+        res.status(500).json({ message: 'Internal server error occurred' });
     }
 };
 
 const getEventNotifications = async (req, res) => {
     const { eventId } = req.params;
     try {
+        const event = await Event.findByPk(eventId);
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+        // Only organizer or admin can fetch notifications for an event
+        if (event.organizerId !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Forbidden' });
+        }
+
         const notifications = await Notification.findAll({
             where: { eventId },
+            order: [['createdAt', 'DESC']],
         });
         res.json(notifications);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('Get Event Notifications Error:', err);
+        res.status(500).json({ message: 'Internal server error occurred' });
     }
 };
 
